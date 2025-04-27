@@ -1,100 +1,117 @@
-# FluxGarage RoboEyes MQTT Projekt
+# FluxGarage RoboEyes MQTT Projekt (Ultra Complete Version)
 
 ## Projektbeschreibung
 
-Dieses Projekt steuert animierte Roboteraugen auf einem OLED-Display (SH1106) über MQTT-Kommandos.
-Es unterstützt Animationen, zufälliges Blinzeln, einen Schlafmodus sowie automatische Idle-Animationen.
+Dieses Projekt steuert animierte Roboteraugen über MQTT vollständig:
 
-Die MQTT-Serverdaten (IP-Adresse und Port) werden bequem über einen **WiFiManager** im Captive Portal konfiguriert.
+- Zufällige Animationen (roboeyes/random)
+- Sleep-Mode aktivieren/deaktivieren (roboeyes/sleep)
+- Idle-Mode steuern (roboeyes/IdleMode)
+- Stimmung ändern (roboeyes/mood)
+- Blickrichtung setzen (roboeyes/position)
+- Curiosity-Effekt aktivieren/deaktivieren (roboeyes/curiosity)
+- Horizontal/Vertikal Flicker an/aus (roboeyes/hflicker, roboeyes/vflicker)
+- Autoblinker konfigurieren (roboeyes/autoblinker)
+- Augenbreite/Höhe/Rundung einstellen (roboeyes/width, roboeyes/height, roboeyes/borderradius)
+- Augenabstand ändern (roboeyes/spacebetween)
+- Cyclops-Modus aktivieren (roboeyes/cyclops)
+- Spezialanimationen abspielen (roboeyes/confused, roboeyes/laugh)
+- Statusmeldungen empfangen (roboeyes/status)
 
 ---
 
 ## Hardware
 
-| Komponente             | Beschreibung                       |
-|-------------------------|------------------------------------|
-| ESP8266 (z.B. NodeMCU)   | Mikrocontroller mit WLAN           |
-| OLED Display 1,3" SH1106 | 128x64 Pixel, I2C Interface        |
-| Jumper Kabel             | Für die Verbindung                |
-| USB-Kabel                | Für die Programmierung und Stromversorgung |
+| Komponente               | Beschreibung |
+|--------------------------|---------------|
+| ESP8266 (z.B. NodeMCU)   | Mikrocontroller mit WLAN |
+| OLED Display 1,3" SH1106 | 128x64 Pixel, I2C |
+| Jumper Kabel             | Verbindungskabel |
+| USB-Kabel                | Programmierung und Stromversorgung |
 
 ---
 
 ## Pinbelegung
 
-| ESP8266 Pin  | OLED Display Pin |
-|--------------|------------------|
-| 3V3          | VCC               |
-| GND          | GND               |
-| D2 (GPIO4)   | SDA               |
-| D1 (GPIO5)   | SCL               |
+| ESP8266 Pin | OLED Display Pin  |
+|-------------|-------------------|
+| 3V3         | VCC               |
+| GND         | GND               |
+| D2 (GPIO4)  | SDA               |
+| D1 (GPIO5)  | SCL               |
 
-*(Standard I2C Pins auf NodeMCU/ESP8266)*
-
----
-
-## Bibliotheken
-
-Folgende Arduino-Bibliotheken müssen installiert sein:
-
-- [Adafruit GFX Library](https://github.com/adafruit/Adafruit-GFX-Library)
-- [Adafruit SH110X](https://github.com/adafruit/Adafruit_SH110X)
-- [WiFiManager](https://github.com/tzapu/WiFiManager)
-- [PubSubClient](https://github.com/knolleary/pubsubclient)
-- [FluxGarage RoboEyes](https://github.com/FluxGarage/RoboEyes)
+*(Standard I2C-Anschlussbelegung)*
 
 ---
 
-## Einrichtung
+## MQTT Topics
 
-1. Alle Bibliotheken installieren (siehe oben).
-2. Sketch `FluxGarage_RoboEyes_MQTT_FinalUltraSleepWiFi.ino` in der Arduino IDE öffnen.
-3. Board: **ESP8266** auswählen (z.B. NodeMCU 1.0).
-4. Sketch auf das Board hochladen.
-5. Nach dem ersten Start öffnet der ESP ein WLAN namens **RoboEyes_AP**.
-6. Mit dem Smartphone oder PC verbinden.
-7. Im Web-Portal:
-    - WLAN-Daten eintragen
-    - MQTT-Server IP (z.B. 192.168.188.21) und Port (z.B. 1883) eintragen
-8. Fertig! RoboEyes verbinden sich automatisch.
-
----
-
-## MQTT Steuerung
-
-| Topic                  | Payload  | Beschreibung |
-|-------------------------|----------|--------------|
-| `roboeyes/animation`    | 0–15    | Starte bestimmte Animation |
-| `roboeyes/random`       | 1/0      | Zufällige Animationen an/aus |
-| `roboeyes/random_blink` | 1/0      | Zufälliges Blinzeln an/aus |
-| `roboeyes/sleep`        | 1/0      | Sleep-Modus aktivieren/deaktivieren |
-| `roboeyes/status`       | Text     | Statusmeldungen (z.B. "Sleep Modus aktiviert") |
-
----
-
-## Besondere Funktionen
-
-- **Random Animation Mode:** Alle 6 Sekunden wird automatisch eine neue Animation abgespielt.
-- **Random Blink Mode:** Augen blinzeln zufällig mit Single, Double oder Triple Blinks.
-- **Sleep Mode:** Augen schließen sich per MQTT-Befehl.
-- **Special Idle Mode:** Nach 5 Minuten Inaktivität wechseln die Augen in den "TIRED" Zustand.
+|            Topic        | Payload | Beschreibung |
+|:------------------------|:--------|:-------------|
+| `roboeyes/animation`    | 0–15 | Bestimmte Animation abspielen |
+| `roboeyes/random`       | 1/0 | Zufällige Animationen ein/aus |
+| `roboeyes/random_blink` | 1/0 | Zufälliges Blinzeln ein/aus |
+| `roboeyes/sleep`        | 1/0 | Sleep-Modus aktivieren/deaktivieren |
+| `roboeyes/IdleMode`     | ON,2,2 oder OFF,0,0 | Idle Mode aktivieren/deaktivieren mit Intervall |
+| `roboeyes/mood`         | 0=DEFAULT, 1=TIRED, 2=ANGRY, 3=HAPPY | Stimmung setzen |
+| `roboeyes/position`     | N, NE, E, SE, S, SW, W, NW, DEFAULT | Blickrichtung setzen |
+| `roboeyes/curiosity`    | 1/0 | Curiosity (seitliche Deformation) aktivieren/deaktivieren |
+| `roboeyes/hflicker`     | ON,2 oder OFF,0 | Horizontal Flicker aktivieren/deaktivieren mit Amplitude |
+| `roboeyes/vflicker`     | ON,2 oder OFF,0 | Vertikal Flicker aktivieren/deaktivieren mit Amplitude |
+| `roboeyes/confused`     | 1 | Verwirrte Animation abspielen |
+| `roboeyes/laugh`        | 1 | Lachende Animation abspielen |
+| `roboeyes/autoblinker`  | ON,3,2 oder OFF,0,0 | Autoblinker konfigurieren |
+| `roboeyes/width`        | 36,40 | Augenbreite links,rechts setzen |
+| `roboeyes/height`       | 30,34 | Augenhöhe links,rechts setzen |
+| `roboeyes/borderradius` | 8,10 | Augenrundung links,rechts setzen |
+| `roboeyes/spacebetween` | 10 | Abstand zwischen den Augen setzen |
+| `roboeyes/cyclops`      | 1/0 | Cyclops-Modus ein/aus (Einzelauge) |
+| `roboeyes/status`       | Text | Statusmeldungen vom Gerät |
 
 ---
 
-## Beispiel MQTT Steuerung
+## Installation
 
-Mit `MQTT.fx`, `Node-RED`, `ioBroker` oder einem anderen MQTT-Client kannst du einfach Topics senden:
+1. Lade die Arduino-Bibliotheken:
+   - **Adafruit GFX**
+   - **Adafruit SH110X**
+   - **WiFiManager**
+   - **PubSubClient**
+   - **FluxGarage RoboEyes**
 
-- `roboeyes/animation` → Payload `3` ➞ verwirrt schauen
-- `roboeyes/random` → Payload `1` ➞ zufällige Animationen starten
-- `roboeyes/sleep` → Payload `1` ➞ Augen schließen (Schlafmodus)
+2. Verbinde dein ESP8266-Board per USB.
+
+3. Flashe den Sketch.
+
+4. Beim ersten Start öffnet sich der WiFiManager:
+   - Verbinde dich mit "RoboEyes_AP"
+   - Gib dein WLAN ein
+   - Gib die IP und den Port deines MQTT-Servers ein
+
+5. Danach ist dein RoboEyes-System MQTT-gesteuert online!
 
 ---
 
-**Viel Spaß beim Nachbauen und Anpassen!** 🎉
+## Beispiel MQTT Befehle
+
+- **Animation starten:**  
+  `roboeyes/animation` → `3` → Verwirrte Augenanimation
+
+- **Random Modus aktivieren:**  
+  `roboeyes/random` → `1`
+
+- **Cyclops Modus aktivieren:**  
+  `roboeyes/cyclops` → `1`
+
+- **Augenbreite ändern:**  
+  `roboeyes/width` → `36,40`
+
+- **AutoBlinker deaktivieren:**  
+  `roboeyes/autoblinker` → `OFF,0,0`
 
 ---
 
-> Erstellt von teletoby mit hilfe von ChatGPT 🚀
+**Viel Spaß beim Steuern der RoboEyes! 🚀👀**
 
-
+---
+> Erstellt von teletoby-swctv
