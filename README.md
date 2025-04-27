@@ -95,6 +95,6 @@ Mit `MQTT.fx`, `Node-RED`, `ioBroker` oder einem anderen MQTT-Client kannst du e
 
 ---
 
-> Erstellt von [deinem Namen oder GitHub-Username] 🚀
+> Erstellt von teletoby mit hilfe von ChatGPT 🚀
 
 
